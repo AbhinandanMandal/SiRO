@@ -68,5 +68,26 @@ class MultiHeadAttention(nn.Module):
         return output, attn
 
 
+"""
+Use only when extracting features 
+"""
+
+def set_feature_extraction_mode(model, feature_extracting):
+    if feature_extracting:
+        print("VGGnet in feature extracting mode")
+        for param in model.parameters():
+            param.requires_grad = False
+    else:
+        print("Training VGG-16 backbone end-to-end")
+
+
+"""
+bbone = models.resnet50(pretrained=True)
+    set_parameter_requires_grad(bbone, False)
+    num_ftrs = bbone.fc.in_features
+    bbone.fc = nn.Sequential(
+                nn.Linear(num_ftrs, embDim)) 
+"""
+
 
 
