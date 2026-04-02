@@ -367,7 +367,7 @@ def evaluate_performance_dual(dataset, Config, trcv_model, nview):
             test_OE.values()), list(test_CE.values()), Config)
         # ormap: object retrieval mAP
         # crmap: class retrieval mAP
-        # clsacc: class recognition accuracy
+        # clsacc: singel-view class recognition accuracy
         # svor: single-view object recognition accuracy
 
         end2 = time.time()
