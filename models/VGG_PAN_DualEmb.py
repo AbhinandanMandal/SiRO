@@ -10,7 +10,7 @@ import torch
 
 
 class DualModel(nn.Module):
-    def __int__(self, inChannel, embDim, nHeads, nLayers, dropout, nCls):
+    def __init__(self, inChannel, embDim, nHeads, nLayers, dropout, nCls):
         super(DualModel, self).__init__()
 
         print("PAN for dual object, category embedding with VGG backbone")
