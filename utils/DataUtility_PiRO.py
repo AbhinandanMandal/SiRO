@@ -14,14 +14,12 @@ from tqdm import tqdm
 # CUSTOM TRAIN DATASET FOR MENTIONED 3 DATASETS
 
 # custom dataset for ObjectPI (OOWL) dataset
-
-
 class OOWLTrainDataset(Dataset):
     def __init__(self, Config, simClass_list, name=""):
-        # Config we'll get from ConfigOOWL
+        # Config we'll get from ConfigOOWL and others
         self.transform = Config.train_dataAug
         self.should_invert = False
-        self.gal_vp = Config.gap_vp
+        self.gal_vp = Config.gal_vp
         self.N_vp = len(Config.gal_vp)  # length of gallery view-points
         self.dpath = Config.gallery_dir  # datapath
         self.N_class = Config.Ntrain
