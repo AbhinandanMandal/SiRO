@@ -1,5 +1,7 @@
 
 # HYPERPARAMETERS USED FOR TRAINING
+# AUGMENTATION AND OTHER STUFFS ASSOCIATED WITH TRAINING
+
 # PiRO used 3 datasets
 # ObjectPI, ModelNet-40, FG3D
 # objectPI also known as OOWL
@@ -55,7 +57,12 @@ class HyperParams():
         self.dropout = 0.25  # dropout for self-attention layer
         self.expname = expname  # experiment name
         self.task = 'JNT'  # joint training # the model is trained jointly on multiple-objectives/embedding-spaces at the same time
+        # also can configured for joint loss (category + object. more detail in training loop)
         self.ecc_ratio = 1.5  # early convergence ratio
+
+# configurations = all the setting required for running the experiment
+# for this it is like
+# how to train, what data to use, where to store results etc
 
 
 # configurations for ObjectPI (OOWL) dataset
@@ -85,10 +92,10 @@ class ConfigOOWL():
         self.Ntest = 98  # testing samples
 
         # this is a part of metric learning
-        # object to class mapping and vice-versa and class-wise grouping
+        # object to class mapping for training and testing
         self.o2ctrain = np.load(self.gallery_dir+'train_o2c.npy').astype('int')
         self.o2ctest = np.load(self.probe_dir+'test_o2c.npy').astype('int')
-        clist = []  # class list
+        clist = []  # class to obj list
 
         for c in range(25):
             clist.append([])
@@ -96,20 +103,34 @@ class ConfigOOWL():
             temp = clist[x]
             temp.append(i)
             clist[x] = temp
-        self.class_list = clist
+        self.class_list = clist  # class to obj mapping
         print(clist)
 
-        self.LR = 0.00001
-        self.alpha = a
-        self.inpChannel = 3
-        self.imgDim = 224
-        self.embedDim = edim
-        self.vData = False
-        self.Ncomp = 10
+        self.LR = 0.00001  # learning rate
+        self.alpha = a  # alpha = intra class margin
+        self.inpChannel = 3  # color input channel
+        self.imgDim = 224  # img size 224 x 224
+        self.embedDim = edim  # embedding dimension
+        self.vData = False  # most likely visual data flag/ view-based data flag
+        # when flag = False then
+        # treat input as individual images or structured multi-view batches
+        # when flag = True
+        # maybe for visualization
+        # when self.vData = False that applies
+        # don't treat views seperately for visualization - just use them normally in training
+        # practically vData = False -> training mode
+        # vData = True -> visualization mode
+        self.Ncomp = 10  # most likely number of comparision samples
+        # maybe used in metric learning & retrieval evalution
+        # for each query -> compare with 10 candidates
 
         # for storing view-points
-        self.gal_vp = []
-        self.probe_vp = []
+        # view-points are the multiple views of single object
+        self.gal_vp = []  # gallery viewpoints
+        self.probe_vp = []  # probe viewpoints
+        # for retrieval systems
+        # gallery = reference database (train set)
+        # probe = query samples (test set)
 
         # augmentation of images before training
         self.train_dataAug = transforms.Compose([
@@ -121,15 +142,19 @@ class ConfigOOWL():
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
 
-        N_G_B = 8  # number of gallery views
+        # maximum allowed number of gallery views per object (batch limit)
+        N_G_B = 8
         self.metaCategories = [range(x-15, x+1) for x in range(16, 383, 16)]
+        # for each group self.metaCategories contains 16 consecutive indices
+        # each group represents one object (with mutiple views)
+        # metaCategories = a group of images belonging to the SAME object across multiple views
 
         # view-points
         # different view-points is for multi-view learning
         # 8 viewpoints per object
         # this is for retrieval and recognition
-        self.gal_vp = [1, 2, 3, 4, 5, 6, 7, 8]  # gallery
-        self.probe_vp = [1, 2, 3, 4, 5, 6, 7, 8]  # probablity
+        self.gal_vp = [1, 2, 3, 4, 5, 6, 7, 8]
+        self.probe_vp = [1, 2, 3, 4, 5, 6, 7, 8]
         self.N_G = min(len(self.gal_vp), N_G_B)  # no of gallery views
         print(self.N_G)
 
@@ -176,7 +201,7 @@ class ConfigMNet40():
             temp = clist[x]
             temp.append(i)
             clist[x] = temp
-        self.class_list = clist
+        self.class_list = clist  # object class list
         print(clist)
         self.LR = 0.00001
         self.alpha = a
@@ -187,6 +212,8 @@ class ConfigMNet40():
         self.Ncomp = 10
         self.gal_vp = []
         self.probe_vp = []
+
+        # augmentation on image
         self.train_dataAug = transforms.Compose([
             transforms.Resize((self.imgDim, self.imgDim)),
             transforms.RandomHorizontalFlip(),
