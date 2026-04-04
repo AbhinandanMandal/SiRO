@@ -10,6 +10,9 @@ import numpy as np
 import os
 from tqdm import tqdm
 
+# device specifications for model training
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 
 # CUSTOM TRAIN DATASET FOR MENTIONED 3 DATASETS
 
@@ -25,7 +28,7 @@ class OOWLTrainDataset(Dataset):
         self.N_class = Config.Ntrain
         self.N_comp = Config.Ncomp  # comparision samples with a particular sample img
         self.obj2cls = Config.o2ctrain  # object to class mapping
-        self.cls2obj = Config.clas_list  # class to object mapping
+        self.cls2obj = Config.class_list  # class to object mapping
         self.dataset = name  # dataset name
         self.N_G = Config.N_G
         print("Sample from same category !!!")
@@ -337,12 +340,20 @@ def calculate_stats(net, Config, dataset, emb_space='dual'):
                              shuffle=False, num_workers=16)
     net.eval()  # net is neural network model
 
+    # loading the model into gpu device (works for both cpu & gpu)
+    device = next(net.parameters()).device
+
     with torch.no_grad():
         for i, (ref_data, obj_labels, cls_labels) in enumerate(tqdm(trainLoader)):
             # for the case of multi-view images
             # img sizes are [b, v, c h, w]
             # here we're working for embedding for each obj
             # so ref_data = [v,c,h,w]
+
+            # setting up ref_data, obj_labels, cls_labels into device
+            ref_data = ref_data.to(device)
+            obj_labels = obj_labels.to(device)
+            cls_labels = cls_labels.to(device)
 
             if emb_space == "dual":
                 # rOE can be reference object embedding, rOE shape [v, emb_dim]
@@ -364,4 +375,3 @@ def calculate_stats(net, Config, dataset, emb_space='dual'):
         # information of all the distances
         interCN_catg), np.mean(interCN_min)]
     return distInfo
-
