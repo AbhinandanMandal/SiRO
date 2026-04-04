@@ -97,7 +97,7 @@ def append_list_as_row(file_name, list_of_elem):
 # plotting informations
 def plot_infoex(infoEx, path):
     fig, ax1 = plt.subplots()
-    if len(infoEx) > 1:
+    if len(infoEx) > 1: 
         color = 'tab:red'
         ax1.set_xlabel('Epochs')
         ax1.set_ylabel('Informative Example Percentage', color=color)
@@ -112,6 +112,7 @@ def plot_infoex(infoEx, path):
 # plotting distance
 def plot_distance(infoEx, max_intra, min_inter, ratio, path):
     fig, ax1 = plt.subplots()
+
     if len(infoEx) > 1:
         color = 'tab:red'
         ax1.set_xlabel('Epochs')
@@ -140,3 +141,4 @@ def plot_distance(infoEx, max_intra, min_inter, ratio, path):
         legend2.get_frame().set_facecolor('C0')
 
         plt.savefig(path)
+
