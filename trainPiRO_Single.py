@@ -11,25 +11,27 @@ same space by training jointly using L-Softmax and Pose-invariant losses
 """
 Load Libraries
 """
+import sys
+import torch.multiprocessing
+import torchvision.datasets as dset
+import torch
+from torch import optim
+from torch.utils.data import DataLoader
+from torch.optim.lr_scheduler import StepLR
+from tqdm import tqdm
+from models.VGG_PAN_SingleEmb import SingleModel
+from losses.PILosses import PILossOBJ, PILossCAT
+from losses.CategoryLoss import LossCAT
+from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
+from utils.helperFunctions import plot_distance, plot_infoex
+from utils.InferenceUtility_large import evaluate_performance_single
 from ConfigLearn import ConfigOOWL, ConfigMNet40, ConfigFG3D
 from ConfigLearn import HyperParams
-from utils.InferenceUtility_large import evaluate_performance_single
-from utils.helperFunctions import plot_distance, plot_infoex
-from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
-from losses.CategoryLoss import LossCAT
-from losses.PILosses import PILossOBJ, PILossCAT
-from models.VGG_PAN_SingleEmb import SingleModel
-from tqdm import tqdm
-from torch.optim.lr_scheduler import StepLR
-from torch.utils.data import DataLoader
-from torch import optim
-import torch
-import torchvision.datasets as dset
-import torch.multiprocessing
-import sys
 torch.multiprocessing.set_sharing_strategy('file_system')
 print(torch.__version__)
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+# device for model training
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 """
 Load utility functions 
@@ -150,8 +152,14 @@ def train(epoch):
 
     trainloop = tqdm(tdataloader, leave=False)
     trcv_model.train()
+
     for data in trainloop:
         I_A, I_N, label_category = data
+
+        # loading embeddings & label category into device
+        I_A = I_A.to(device)
+        I_N = I_N.to(device)
+        label_category = label_category.to(device)
 
         optimizer.zero_grad()
 
@@ -262,3 +270,4 @@ print("-------------------------- Multi-View ----------------------------")
 print("MV Classification Accuracy: Category {} %| Object {} %| ".format(mvclea, mvoc))
 print("MV Retrieval mAP: Category {} %| Object {} %| ".format(mvcrm, mvoret))
 print("-------------------------------------------------------------------")
+
