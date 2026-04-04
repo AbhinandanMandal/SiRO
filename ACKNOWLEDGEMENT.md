@@ -1,7 +1,7 @@
 
 # Acknowledgment
 
-The implementation of **SiOR (Single-invariant Object Representation)** in this project has been developed by taking inspiration from existing research works,
+The implementation of **SIOR (State Invariant Object Representation)** in this project has been developed by taking inspiration from existing research works,
 such as (https://github.com/sarkar-rohan/PiRO, https://github.com/sarkar-rohan/ObjectsWithStateChange)
 
 and open-source implementations in the field of computer vision and deep learning.
