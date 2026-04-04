@@ -1,5 +1,9 @@
 
 # Pose-invariant attention network architecture for single object embedding
+# with this model
+# model learns category-specific and object-specific discriminative features within the same embedding space
+
+
 from models.architecture_utils import MultiHeadAttention
 import torch.nn as nn
 from torchvision import models
