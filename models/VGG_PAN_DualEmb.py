@@ -1,5 +1,8 @@
 
 # Pose-invariant attention network for dual category and object embedding
+# with this model
+# model learns category-specific, object-specific discriminative features with two different embedding space (objEmb, clsEmb)
+
 
 from models.architecture_utils import MultiHeadAttention
 import torch.nn as nn
@@ -48,7 +51,7 @@ class DualModel(nn.Module):
 
         # getting compact object, category embedding
         objEmbs = self.obj_embedder(imgFtrs)  # [b*v, emb_dim]
-        clsEmbs = self.cls_embedder(imgFtrs)  # [b*v, emb_dim]
+        clsEmbs = self.cls_embedder(imgFtrs)  # [b*v, emb_dim]                        
 
         # restoring multi-view structure for both object embedding & category embedding
         # b=b : restoring along the batches
