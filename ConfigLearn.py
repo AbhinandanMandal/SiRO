@@ -136,8 +136,10 @@ class ConfigOOWL():
         self.train_dataAug = transforms.Compose([
             transforms.Resize((self.imgDim, self.imgDim)),
             transforms.RandomHorizontalFlip(),
-            transforms.RandomAffine(5, translate=None, scale=(
-                0.9, 1.1), shear=[-1, 1, -1, 1], resample=False, fillcolor=0),
+
+            # updated RandomAffine
+            transforms.RandomAffine(degrees=5, translate=None, scale=(
+                0.9, 1.1), shear=[-1, 1, -1, 1], interpolation=transforms.InterpolationMode.BILINEAR, fill=0),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
@@ -217,8 +219,8 @@ class ConfigMNet40():
         self.train_dataAug = transforms.Compose([
             transforms.Resize((self.imgDim, self.imgDim)),
             transforms.RandomHorizontalFlip(),
-            transforms.RandomAffine(5, translate=None, scale=(
-                0.9, 1.1), shear=[-1, 1, -1, 1], resample=False, fillcolor=0),
+            transforms.RandomAffine(degrees=5, translate=None, scale=(
+                0.9, 1.1), shear=[-1, 1, -1, 1], interpolation=transforms.InterpolationMode.BILINEAR, fill=0),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
@@ -281,8 +283,8 @@ class ConfigFG3D():
         self.train_dataAug = transforms.Compose([
             transforms.Resize((self.imgDim, self.imgDim)),
             transforms.RandomHorizontalFlip(),
-            transforms.RandomAffine(5, translate=None, scale=(
-                0.9, 1.1), shear=[-1, 1, -1, 1], resample=False, fillcolor=0),
+            transforms.RandomAffine(degrees=5, translate=None, scale=(
+                0.9, 1.1), shear=[-1, 1, -1, 1], interpolation=transforms.InterpolationMode.BILINEAR, fill=0),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
