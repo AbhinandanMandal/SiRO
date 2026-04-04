@@ -1,4 +1,5 @@
 
+
 """
 ===============================================================================
 Code for Pose-invariant Classification and Retrieval (PICR) using 
@@ -6,11 +7,12 @@ Pose-invariant Attention Network to learn category and object embeddings in the
 same space by training jointly using L-Softmax and Pose-invariant losses
 ===============================================================================
 """
+
 """
 Load Libraries
 """
-from ConfigLearn import HyperParams
 from ConfigLearn import ConfigOOWL, ConfigMNet40, ConfigFG3D
+from ConfigLearn import HyperParams
 from utils.InferenceUtility_large import evaluate_performance_single
 from utils.helperFunctions import plot_distance, plot_infoex
 from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
@@ -23,8 +25,8 @@ from torch.utils.data import DataLoader
 from torch import optim
 import torch
 import torchvision.datasets as dset
-import sys
 import torch.multiprocessing
+import sys
 torch.multiprocessing.set_sharing_strategy('file_system')
 print(torch.__version__)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -230,6 +232,18 @@ for epoch in range(0, Config.Nepochs):
     print(Config.save_plot_dist_path)
     print(Config.save_plot_learn_path)
 
+
+"""
+orm: sv object retrieval map
+crm: sv class retrieval map
+clea: sv class recognition accuracy
+svoc: sv object recognition accuracy
+mvcrm: mv class retrieval map
+mvclea: mv class recognition accuracy
+mvoc: mv object recogniton accuracy
+mvoret: mv object retrieval map
+"""
+
 print("Evaluating final model")
 trcv_model.eval()
 orm, crm, clea, svoc = evaluate_performance_single(
@@ -248,4 +262,3 @@ print("-------------------------- Multi-View ----------------------------")
 print("MV Classification Accuracy: Category {} %| Object {} %| ".format(mvclea, mvoc))
 print("MV Retrieval mAP: Category {} %| Object {} %| ".format(mvcrm, mvoret))
 print("-------------------------------------------------------------------")
-
