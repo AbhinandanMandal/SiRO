@@ -24,25 +24,27 @@ ConfigLearn: Training & Testing configurations for different datasets
 
 
 # Loading libraries
-import torch.multiprocessing
-from ConfigLearn import HyperParams # for hyperparameters
-from ConfigLearn import ConfigOOWL, ConfigFG3D, ConfigMNet40
-import sys
-from models.VGG_PAN_DualEmb import DualModel
-import torchvision.datasets as dset
-from losses.PILosses import PILossCAT, PILossOBJ
-from losses.CategoryLoss import LossCAT
-from torch import optim
-from torch.optim.lr_scheduler import StepLR
-from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
-from torch.utils.data import DataLoader
-from tqdm import tqdm
-import torch
 from utils.InferenceUtility_large import evaluate_performance_dual
 from utils.helperFunctions import plot_distance, plot_infoex
+import torch
+from tqdm import tqdm
+from torch.utils.data import DataLoader
+from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
+from torch.optim.lr_scheduler import StepLR
+from torch import optim
+from losses.CategoryLoss import LossCAT
+from losses.PILosses import PILossCAT, PILossOBJ
+import torchvision.datasets as dset
+from models.VGG_PAN_DualEmb import DualModel
+import sys
+from ConfigLearn import ConfigOOWL, ConfigFG3D, ConfigMNet40
+from ConfigLearn import HyperParams # for hyperparameters
+import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 print(torch.__version__)
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+# setting up device
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 dataset = sys.argv[1]  # OOWL, MNet40, FG3D
@@ -103,6 +105,7 @@ ratio_history = []
 pi_obj_criterion = PILossOBJ(alpha=hp.alpha, beta=hp.beta,
                              lamda=hp.lamda)  # pose-invariant object loss of the same category
 pi_cat_criterion = PILossCAT(theta=hp.theta, lamda=hp.lamda)
+# large-margin softmax category loss
 cat_criterion = LossCAT(Config=Config, gamma=hp.gamma)
 
 """Optimizer and Scheduler"""
@@ -144,6 +147,11 @@ def train(epoch):
 
     for data in trainloop:
         I_A, I_N, label_category = data
+
+        # loading embeddings and label categories into device
+        I_A = I_A.to(device)
+        I_N = I_N.to(device)
+        label_category = label_category.to(device)
 
         optimizer.zero_grad()
 
@@ -260,4 +268,3 @@ print("-------------------------- Multi-View ----------------------------")
 print("MV Classification Accuracy: Category {} %| Object {} %| ".format(mvclea, mvoc))
 print("MV Retrieval mAP: Category {} %| Object {} %| ".format(mvcrm, mvoret))
 print("-------------------------------------------------------------------")
-
