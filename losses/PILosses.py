@@ -116,7 +116,7 @@ class PILossOBJ(nn.Module):  # pose-invariant object loss for object embedding s
         loss_MV_AMV_N_inter = F.relu(self.beta - MV_AMV_N_inter)
 
         # overall pose-invariant object loss is
-        losses = self.lamda(loss_AN_inter+loss_MV_AMV_N_inter) + \
+        losses = self.lamda*(loss_AN_inter+loss_MV_AMV_N_inter) + \
             loss_A_cluster+loss_N_cluster
 
         # info_quads contains
