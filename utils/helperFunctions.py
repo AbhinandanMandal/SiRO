@@ -27,8 +27,8 @@ def expand_pairwise_distances(x, y=None):
     else:
         # only x embedding is present
         differences = x.unsqueeze(1) - x.unsqueeze(0)
-    distances = torch.sum(differences*differences -
-                          1)  # summing the differences
+    # summing the differences, -1 for dimension
+    distances = torch.sum(differences*differences, -1)
     return distances  # euclidean distance between x, y
 
 
@@ -97,7 +97,7 @@ def append_list_as_row(file_name, list_of_elem):
 # plotting informations
 def plot_infoex(infoEx, path):
     fig, ax1 = plt.subplots()
-    if len(infoEx) > 1: 
+    if len(infoEx) > 1:
         color = 'tab:red'
         ax1.set_xlabel('Epochs')
         ax1.set_ylabel('Informative Example Percentage', color=color)
@@ -141,4 +141,3 @@ def plot_distance(infoEx, max_intra, min_inter, ratio, path):
         legend2.get_frame().set_facecolor('C0')
 
         plt.savefig(path)
-
