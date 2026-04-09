@@ -83,6 +83,9 @@ class ConfigOOWL():
         self.save_result_path = self.save_path+str(case)+'_OOWLbenchmark.csv'
         self.save_plot_dist_path = self.save_path+str(case)+'_OOWLdistance.png'
         self.save_plot_learn_path = self.save_path+str(case)+'_OOWLlearn.png'
+        # for convergence plot
+        self.save_convergence_path = self.save_path + \
+            str(case)+'_OOWLconvergence.png'
 
         self.BS = bs
         self.Nepochs = 25  # number of epochs
@@ -184,6 +187,9 @@ class ConfigMNet40():
         self.save_plot_dist_path = self.save_path + \
             str(case)+'_MNet40distance.png'
         self.save_plot_learn_path = self.save_path+str(case)+'_MNet40learn.png'
+        # for convergence plot
+        self.save_convergence_path = self.save_path + \
+            str(case)+'_MNet40convergence.png'
 
         self.BS = bs
         self.Nepochs = 25  # 50
@@ -250,6 +256,9 @@ class ConfigFG3D():
         self.save_result_path = self.save_path+str(case)+'_FG3Dbenchmark.csv'
         self.save_plot_dist_path = self.save_path+str(case)+'_FG3Ddistance.png'
         self.save_plot_learn_path = self.save_path+str(case)+'_FG3Dlearn.png'
+        # for convergence plot
+        self.save_convergence_path = self.save_path + \
+            str(case)+'_FG3Dconvergence.png'
 
         self.BS = bs
         self.Nepochs = 25
