@@ -9,9 +9,8 @@ same space by training jointly using L-Softmax and Pose-invariant losses
 """
 Load Libraries
 """
-from ConfigLearn import HyperParams
 from utils.InferenceUtility_large import evaluate_performance_single
-from updates.ConfigLearn_update import ConfigOOWL, ConfigMNet40, ConfigFG3D # connecting trainPiRO_Singel_update with ConfigLearn_update
+from updates.ConfigLearn_update import ConfigOOWL, ConfigMNet40, ConfigFG3D, HyperParams # connecting trainPiRO_Singel_update with ConfigLearn_update
 from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
 from losses.CategoryLoss import LossCAT
 from models.VGG_PAN_SingleEmb import SingleModel
