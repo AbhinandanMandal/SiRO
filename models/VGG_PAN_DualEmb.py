@@ -51,7 +51,7 @@ class DualModel(nn.Module):
 
         # getting compact object, category embedding
         objEmbs = self.obj_embedder(imgFtrs)  # [b*v, emb_dim]
-        clsEmbs = self.cls_embedder(imgFtrs)  # [b*v, emb_dim]                        
+        clsEmbs = self.cls_embedder(imgFtrs)  # [b*v, emb_dim]
 
         # restoring multi-view structure for both object embedding & category embedding
         # b=b : restoring along the batches

@@ -91,3 +91,4 @@ class TrainingLogger:
     #         self.test_acc_history,
     #         self.plot_convergence_path
     #     )
+

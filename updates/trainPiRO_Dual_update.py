@@ -26,21 +26,21 @@ ConfigLearn: Training & Testing configurations for different datasets
 
 
 # loading libraries
+from utils.InferenceUtility_large import evaluate_performance_dual
+from updates.trainLogger_update import TrainingLogger
+import torch
+from tqdm import tqdm
+from torch.utils.data import DataLoader
+from updates.ConfigLearn_update import ConfigMNet40, ConfigOOWL, ConfigFG3D, HyperParams
+from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
+from torch.optim.lr_scheduler import StepLR
+from torch import optim
+from losses.CategoryLoss import LossCAT
+from losses.PILosses import PILossCAT, PILossOBJ
+import torchvision.datasets as dset
+from models.VGG_PAN_DualEmb import DualModel
 import torch.multiprocessing
 import sys
-from models.VGG_PAN_DualEmb import DualModel
-import torchvision.datasets as dset
-from losses.PILosses import PILossCAT, PILossOBJ
-from losses.CategoryLoss import LossCAT
-from torch import optim
-from torch.optim.lr_scheduler import StepLR
-from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
-from updates.ConfigLearn_update import ConfigMNet40, ConfigOOWL, ConfigFG3D, HyperParams
-from torch.utils.data import DataLoader
-from tqdm import tqdm
-import torch
-from updates.trainLogger_update import TrainingLogger
-from utils.InferenceUtility_large import evaluate_performance_dual
 torch.multiprocessing.set_sharing_strategy('file_system')
 
 print(torch.__version__)

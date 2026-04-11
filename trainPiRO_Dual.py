@@ -132,7 +132,7 @@ def train(epoch):
     elif dataset == "MNet40":
         trainData = MNet40TrainDataset(Config=Config, name=dataset)
     elif dataset == "FG3D":
-        trainData = MNet40TrainDataset(Config=Config, name=dataset)
+        trainData = FG3DTrainDataset(Config=Config, name=dataset)
     else:
         print("Wrong Dataset")
 
@@ -268,3 +268,4 @@ print("-------------------------- Multi-View ----------------------------")
 print("MV Classification Accuracy: Category {} %| Object {} %| ".format(mvclea, mvoc))
 print("MV Retrieval mAP: Category {} %| Object {} %| ".format(mvcrm, mvoret))
 print("-------------------------------------------------------------------")
+

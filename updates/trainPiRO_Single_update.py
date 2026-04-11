@@ -9,21 +9,21 @@ same space by training jointly using L-Softmax and Pose-invariant losses
 """
 Load Libraries
 """
+from losses.PILosses import PILossOBJ # for single-embeddings,
+from updates.trainLogger import TrainingLogger
+import sys
+import torch.multiprocessing
+import torchvision.datasets as dset
+import torch
+from torch import optim
+from torch.utils.data import DataLoader
+from torch.optim.lr_scheduler import StepLR
+from tqdm import tqdm
+from models.VGG_PAN_SingleEmb import SingleModel
+from losses.CategoryLoss import LossCAT
+from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
 from utils.InferenceUtility_large import evaluate_performance_single
 from updates.ConfigLearn_update import ConfigOOWL, ConfigMNet40, ConfigFG3D, HyperParams # connecting trainPiRO_Singel_update with ConfigLearn_update
-from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
-from losses.CategoryLoss import LossCAT
-from models.VGG_PAN_SingleEmb import SingleModel
-from tqdm import tqdm
-from torch.optim.lr_scheduler import StepLR
-from torch.utils.data import DataLoader
-from torch import optim
-import torch
-import torchvision.datasets as dset
-import torch.multiprocessing
-import sys
-from updates.trainLogger import TrainingLogger
-from losses.PILosses import PILossOBJ # for single-embeddings,
 # paper considered only pose-invariant object loss and large-margin softmax loss, not any pose-invariant category loss
 torch.multiprocessing.set_sharing_strategy('file_system')
 print(torch.__version__)
@@ -219,7 +219,8 @@ for epoch in range(Config.Nepochs):
                    Config.best_model_path + "_best.pth")
 
     # If ratio > pre-defined early convergence ratio then save the model
-    if ratio > hp.ecc_ratio:
+    min_epochs = 10
+    if epoch >= min_epochs and ratio > hp.ecc_ratio:
         print("Early Convergence Criterion Satisfied")
         torch.save(trcv_model.state_dict(),
                    Config.best_model_path + "_ECC.pth")
