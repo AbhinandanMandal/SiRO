@@ -146,3 +146,4 @@ def plot_distance(infoEx, max_intra, min_inter, ratio, path):
         legend2.get_frame().set_facecolor('C0')
 
         plt.savefig(path)
+
