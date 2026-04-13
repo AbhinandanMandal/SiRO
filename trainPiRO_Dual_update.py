@@ -122,7 +122,7 @@ def train(epoch):
 
     # loading data into dataloader
     tdataloader = DataLoader(trainData, shuffle=True,
-                             num_workers=16, batch_sampler=Config.BS)
+                             num_workers=16, batch_size=Config.BS)
     trainloop = tqdm(tdataloader, leave=False)
     trcv_model.train()
 
