@@ -1,7 +1,13 @@
 
+"""
+The same architecture_utils.py has been used both in PiRO and OWSC model code
+"""
+
+
 # in the PiRO literature, it was mentioned of using
 # two single head self-attention layer
 # two single head self-attention is multiheadattention
+
 
 # standard architecture of multiheadattention
 import numpy as np
