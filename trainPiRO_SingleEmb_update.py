@@ -23,7 +23,7 @@ from models.VGG_PAN_SingleEmb import SingleModel
 from losses.CategoryLoss import LossCAT
 from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
 from utils.InferenceUtility_large import evaluate_performance_single
-from ConfigLearn_update import ConfigOOWL, ConfigMNet40, ConfigFG3D, HyperParams # connecting trainPiRO_Singel_update with ConfigLearn_update
+from ConfigLearn_PiRO_update import ConfigOOWL, ConfigMNet40, ConfigFG3D, HyperParams # connecting trainPiRO_Singel_update with ConfigLearn_update
 # paper considered only pose-invariant object loss and large-margin softmax loss, not any pose-invariant category loss
 torch.multiprocessing.set_sharing_strategy('file_system')
 print(torch.__version__)
