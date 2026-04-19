@@ -11,7 +11,7 @@ Load Libraries
 """
 
 from utils.InferenceUtility_large import evaluate_performance_dual, evaluate_performance_single
-from ConfigLearn import HyperParams, ConfigOOWL, ConfigMNet40, ConfigFG3D
+from ConfigLearn_PiRO import HyperParams, ConfigOOWL, ConfigMNet40, ConfigFG3D
 import torch
 import torchvision.datasets as dset
 import sys
