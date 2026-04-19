@@ -37,8 +37,8 @@ from losses.PILosses import PILossCAT, PILossOBJ
 import torchvision.datasets as dset
 from models.VGG_PAN_DualEmb import DualModel
 import sys
-from ConfigLearn import ConfigOOWL, ConfigFG3D, ConfigMNet40
-from ConfigLearn import HyperParams # for hyperparameters
+from ConfigLearn_PiRO import ConfigOOWL, ConfigFG3D, ConfigMNet40
+from ConfigLearn_PiRO import HyperParams # for hyperparameters
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 print(torch.__version__)
