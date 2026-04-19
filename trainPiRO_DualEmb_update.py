@@ -31,7 +31,7 @@ from utils.trainLogger_update import TrainingLogger
 import torch
 from tqdm import tqdm
 from torch.utils.data import DataLoader
-from ConfigLearn_update import ConfigMNet40, ConfigOOWL, ConfigFG3D, HyperParams
+from ConfigLearn_PiRO_update import ConfigMNet40, ConfigOOWL, ConfigFG3D, HyperParams
 from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
 from torch.optim.lr_scheduler import StepLR
 from torch import optim
