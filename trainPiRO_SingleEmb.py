@@ -11,8 +11,8 @@ same space by training jointly using L-Softmax and Pose-invariant losses
 """
 Load Libraries
 """
-from ConfigLearn import HyperParams
-from ConfigLearn import ConfigOOWL, ConfigMNet40, ConfigFG3D
+from ConfigLearn_PiRO import HyperParams
+from ConfigLearn_PiRO import ConfigOOWL, ConfigMNet40, ConfigFG3D
 from utils.InferenceUtility_large import evaluate_performance_single
 from utils.helperFunctions import plot_distance, plot_infoex
 from utils.DataUtility_PiRO import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, calculate_stats
