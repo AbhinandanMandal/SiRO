@@ -238,9 +238,7 @@ class loadDataset(Dataset):
         return self.N_class
 
 
-# for loading class data
-# this is alternate and easier format of __getitem__
-# this loads all the view-points (mutli-view) of object i
+# Alternative function for loadDataset
 def load_class_data(i, dataset, datadir, flag, Config):
     temp = list()
     if flag == 0:
