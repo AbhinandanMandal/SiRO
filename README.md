@@ -1,6 +1,6 @@
-## State Invariant Object Representation (SIOR)
+## State-invariant Representation of Object (SiOR)
 
-The implementation of SIOR (State Invariant Object Representation) in this project has been developed by taking inspiration from existing research works, such as (https://github.com/sarkar-rohan/PiRO, https://github.com/sarkar-rohan/ObjectsWithStateChange)
+The implementation of SiRO (State-invariant Representation of Object) in this project has been developed by taking inspiration from existing research works, such as (https://github.com/sarkar-rohan/PiRO, https://github.com/sarkar-rohan/ObjectsWithStateChange)
 
 and open-source implementations in the field of computer vision and deep learning.
 
