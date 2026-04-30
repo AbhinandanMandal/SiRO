@@ -14,23 +14,23 @@ author used pose invariant object loss and large margin softmax loss for
 single embedding model
 """
 
-# from utils.InferenceUtility_GN import evaluate_SI_performance_single # need to think about it GN for generalization phase
-from utils.InferenceUtility_SI import evaluate_SI_performance_single # need to think about it
-from utils.DataUtility import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, OWSCTrainDataset, calculate_stats
-from models.VGG_PIE_SingleEmb import VGG_avg_picnn, VGG_avg_piproxy, VGG_avg_pitc
-from models.VGG_PAN_SingleEmb import SingleModel
-from utils.trainLogger_update import TrainingLogger
-from torch.optim.lr_scheduler import StepLR
-from torch.utils.data import DataLoader
-from losses.CategoryLoss import LossCAT
-from losses.PILosses import PILossOBJ
-import torch
-import sys
-import torch.multiprocessing
-import torchvision.datasets as dset
-from ConfigLearn import ConfigOOWL, ConfigMNet40, ConfigFG3D, ConfigOWSC_SI, ConfigOWSC_GN, HyperParams
-from tqdm import tqdm
+
 from torch import optim
+from tqdm import tqdm
+from ConfigLearn import ConfigOOWL, ConfigMNet40, ConfigFG3D, ConfigOWSC_SI, ConfigOWSC_GN, HyperParams
+import torchvision.datasets as dset
+import torch.multiprocessing
+import sys
+import torch
+from losses.PILosses import PILossOBJ
+from losses.CategoryLoss import LossCAT
+from torch.utils.data import DataLoader
+from torch.optim.lr_scheduler import StepLR
+from utils.trainLogger_update import TrainingLogger
+from models.VGG_PAN_SingleEmb import SingleModel
+from utils.DataUtility import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, OWSCTrainDataset, calculate_stats
+from utils.InferenceUtility_SI import evaluate_SI_performance_single
+# from models.VGG_PIE_SingleEmb import VGG_avg_picnn, VGG_avg_piproxy, VGG_avg_pitc
 # from utils.InferenceUtility_PI import evaluate_performance_single
 torch.multiprocessing.set_sharing_strategy('file_system')
 print(torch.__version__)
@@ -228,7 +228,7 @@ for epoch in range(Config.Nepochs):
         torch.save(trcv_model.state_dict(),
                    Config.best_model_path + "_best.pth")
 
-    # If ratio > pre-defined early convergence ratio then save the model
+    # If ratio > pre-defined early convergence ratio  and epochs >= min_epochs then save the model
     min_epochs = 10
     if epoch >= min_epochs and ratio > hp.ecc_ratio:
         print("Early Convergence Criterion Satisfied")
