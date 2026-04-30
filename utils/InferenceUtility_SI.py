@@ -1,7 +1,8 @@
 
 """
-Functions for inference on State-invariant Classification and Retrieval 
-category and object-level tasks for the ObjectsWithStateChange (OWSC) SI dataset
+Functions for inference on State-invariant Classification and Retrieval
+category and object-level tasks for the ObjectsWithStateChange (OWSC) dataset
+for State Invariance (SI)
 """
 
 from tqdm import tqdm
@@ -127,10 +128,10 @@ def NNC_OWSC_SV(refC_emb, refO_emb, testC_emb, testO_emb, Config):
     del CR_KNN
     del crranks
     """
-    cr_mAP = single view category retrieval
-    cacc = single view category recognition
-    obj_mAP = single view object retrieval
-    oacc = single view object recognition
+    cr_mAP = single view category retrieval map
+    cacc = single view category recognition accuracy
+    obj_mAP = single view object retrieval map
+    oacc = single view object recognition accuracy
     """
     return cr_mAP*100, cacc/len(cTest)*100, obj_mAP*100, oacc/len(oTest)*100
 
@@ -227,12 +228,8 @@ Evaluate State-invariant category and object-level classification and retrieval
 ===============================================================================
 """
 
-"""
-Note: in InferenceUtility_PI.py, we've choice with nview >=1
-but in InferenceUtility_SI.py we don't have for better generalization
-"""
 
-
+"""
 # Evaluation of state invariant performance for single embedding model
 def evaluate_SI_performance_single(dataset, Config, trcv_model, nview):
     ref_OE = {}  # single view object embedding (test)
@@ -246,10 +243,11 @@ def evaluate_SI_performance_single(dataset, Config, trcv_model, nview):
     ref_mv_OE = {}  # multi view object embedding (train)
     test_mv_OE = {}  # multi view object embedding (test)
     label_mv_OE = {}  # multi view object labels
-    """
-    Load the Single Pose-invariant embedding space model and 
-    extract the gallery (train) embeddings and probe (test) embeddings
-    """
+
+
+    # Load the Single Pose-invariant embedding space model and
+    # extract the gallery (train) embeddings and probe (test) embeddings
+
     trainData = loadDataset(Config, 'train', dataset)
     trainLoader = DataLoader(trainData, shuffle=False,
                              num_workers=8, batch_size=1)
@@ -275,13 +273,112 @@ def evaluate_SI_performance_single(dataset, Config, trcv_model, nview):
             test_mv_CE[j] = mvtOE.detach().cpu().numpy()
             test_mv_OE[j] = mvtOE.detach().cpu().numpy()
             label_mv_OE[j] = j
-    """ Compute performance from single-image query """
+
+    # Compute performance from single-image query
     SV_C_mAP, SV_C_acc, SV_O_mAP, SV_O_acc = NNC_OWSC_SV(list(ref_CE.values()), list(
         ref_OE.values()), list(test_CE.values()), list(test_OE.values()), Config)
-    """ Compute performance from multi-image query """
+
+    # Compute performance from multi-image query
     MV_C_mAP, MV_C_acc, MV_O_mAP, MV_O_acc = NNC_OWSC_MV(list(ref_mv_CE.values()), list(
         ref_mv_OE.values()), list(test_mv_CE.values()), list(test_mv_OE.values()), Config)
 
+
+    # SV_C_mAP : single view class retrieval accuracy
+    # SV_C_acc : single view class recognition accuracy
+    # SV_O_mAP : single view object retrieval accuracy
+    # SV_O_acc : single view object recognition accuracy
+    # # similarly for multi view
+
+    return SV_C_mAP, SV_C_acc, SV_O_mAP, SV_O_acc, MV_C_mAP, MV_C_acc, MV_O_mAP, MV_O_acc
+
+"""
+
+
+# Updating 'evaluate_SI_performance_single for 'nview'
+def evaluate_SI_performance_single(dataset, Config, trcv_model, nview):
+    ref_OE = {}  # single view object embedding (test)
+    ref_CE = {}  # single view category embedding (train)
+    ref_mv_CE = {}  # multi view category embedding (train)
+    test_mv_CE = {}  # multi view category embedding (test)
+    test_OE = {}  # single view object embedding (test)
+    test_CE = {}  # single view category embedding (test)
+    label_cls = {}  # class labels
+    label_obj = {}  # object labels
+    ref_mv_OE = {}  # multi view object embedding (train)
+    test_mv_OE = {}  # multi view object embedding (test)
+    label_mv_OE = {}  # multi view object labels
+    """
+    Load the Single Pose-invariant embedding space model and
+    extract the gallery (train) embeddings and probe (test) embeddings
+    """
+    trainData = loadDataset(Config, 'train', dataset)
+    trainLoader = DataLoader(trainData, shuffle=False,
+                             num_workers=8, batch_size=1)
+    trcv_model.eval()
+    with torch.no_grad():
+        for i, (ref_data, obj_labels, cls_labels) in enumerate(tqdm(trainLoader)):
+            rOE, mvrOE, _ = trcv_model(ref_data.cuda())
+            ref_OE[i] = rOE.squeeze().detach().cpu().numpy()
+            ref_CE[i] = rOE.squeeze().detach().cpu().numpy()
+            ref_mv_CE[i] = mvrOE.detach().cpu().numpy()
+            ref_mv_OE[i] = mvrOE.detach().cpu().numpy()
+    del trainData
+    del trainLoader
+    testData = loadDataset(Config, 'test', dataset)
+    testLoader = DataLoader(testData, shuffle=False,
+                            num_workers=8, batch_size=1)
+    with torch.no_grad():
+        for j, (test_data, obj_labels, cls_labels) in enumerate(tqdm(testLoader)):
+            """
+             tOE, mvtOE, _ = trcv_model(test_data.cuda())
+             test_OE[j] = tOE.squeeze().detach().cpu().numpy()
+             test_CE[j] = tOE.squeeze().detach().cpu().numpy()
+             label_obj[j] = obj_labels
+             test_mv_CE[j] = mvtOE.detach().cpu().numpy()
+             test_mv_OE[j] = mvtOE.detach().cpu().numpy()
+             label_mv_OE[j] = j
+            """
+            if nview == 1:
+                """ If single-view query """
+                tOE, _, _ = trcv_model(test_data)
+                test_OE[j] = tOE.squeeze().detach().cpu().numpy()
+                test_CE[j] = tOE.squeeze().detach().cpu().numpy()
+                label_obj[j] = obj_labels
+
+            elif nview > 1:
+                """ If multi-view query """
+                tOE, mvtOE, _ = trcv_model(test_data)
+                test_CE[j] = mvtOE.detach().cpu().numpy()
+                """ 
+                    evaluating if the model can extract multi-view embeddings where the 
+                    reference images and the test query images of an unseen object are from disparate viewpoints                    
+                    split all available views of test object into two disjoint sets: 
+                    gallery: set comprising of reference views 
+                    probe: set comprising of test views 
+                """
+                p = int(Config.N_G/2)
+                _, refmvobj, _ = trcv_model(test_data[:, :p])
+                _, testmvobj, _ = trcv_model(test_data[:, p:])
+                ref_mv_OE[j] = refmvobj.squeeze().detach().cpu().numpy()
+                test_mv_OE[j] = testmvobj.squeeze().detach().cpu().numpy()
+                label_mv_OE[j] = j
+    if nview == 1:
+        """ Compute performance from single-image query """
+        start2 = time.time()
+        SV_C_mAP, SV_C_acc, SV_O_mAP, SV_O_acc = NNC_OWSC_SV(list(ref_CE.values()), list(
+            ref_OE.values()), list(test_CE.values()), list(test_OE.values()), Config)
+        end2 = time.time()
+        print("Time (Inference): ", (end2 - start2))
+        return SV_C_mAP, SV_C_acc, SV_O_mAP, SV_O_acc
+    if nview > 1:
+
+        """ Compute performance from multi-image query """
+        start2 = time.time()
+        MV_C_mAP, MV_C_acc, MV_O_mAP, MV_O_acc = NNC_OWSC_MV(list(ref_mv_CE.values()), list(
+            ref_mv_OE.values()), list(test_mv_CE.values()), list(test_mv_OE.values()), Config)
+        end2 = time.time()
+        print("Time (Inference): ", (end2 - start2))
+        return MV_C_mAP, MV_C_acc, MV_O_mAP, MV_O_acc
     """
     SV_C_mAP : single view class retrieval accuracy
     SV_C_acc : single view class recognition accuracy
@@ -289,7 +386,7 @@ def evaluate_SI_performance_single(dataset, Config, trcv_model, nview):
     SV_O_acc : single view object recognition accuracy
     # similarly for multi view
     """
-    return SV_C_mAP, SV_C_acc, SV_O_mAP, SV_O_acc, MV_C_mAP, MV_C_acc, MV_O_mAP, MV_O_acc
+    # return SV_C_mAP, SV_C_acc, SV_O_mAP, SV_O_acc, MV_C_mAP, MV_C_acc, MV_O_mAP, MV_O_acc
 
 
 """
@@ -299,7 +396,7 @@ Evaluate State-invariant category and object-level classification and retrieval
 ===============================================================================
 """
 
-
+""" 
 def evaluate_SI_performance_dual(dataset, Config, trcv_model, nview):
     ref_OE = {}
     ref_CE = {}
@@ -312,10 +409,10 @@ def evaluate_SI_performance_dual(dataset, Config, trcv_model, nview):
     ref_mv_OE = {}
     test_mv_OE = {}
     label_mv_OE = {}
-    """
-    Load the Dual Pose-invariant embedding space model and 
-    extract the gallery (train) embeddings and probe (test) embeddings
-    """
+    
+    # Load the Dual Pose-invariant embedding space model and 
+    # extract the gallery (train) embeddings and probe (test) embeddings
+   
     trainData = loadDataset(Config, 'train', dataset)
     trainLoader = DataLoader(trainData, shuffle=False,
                              num_workers=8, batch_size=1)
@@ -341,12 +438,106 @@ def evaluate_SI_performance_dual(dataset, Config, trcv_model, nview):
             test_mv_CE[j] = mvtCE.detach().cpu().numpy()
             test_mv_OE[j] = mvtOE.detach().cpu().numpy()
             label_mv_OE[j] = j
-    """ Compute performance from single-image query """
+    #  Compute performance from single-image query 
     SV_C_mAP, SV_C_acc, SV_O_mAP, SV_O_acc = NNC_OWSC_SV(list(ref_CE.values()), list(
         ref_OE.values()), list(test_CE.values()), list(test_OE.values()), Config)
-    """ Compute performance from multi-image query """
+    #  Compute performance from multi-image query 
     MV_C_mAP, MV_C_acc, MV_O_mAP, MV_O_acc = NNC_OWSC_MV(list(ref_mv_CE.values()), list(
         ref_mv_OE.values()), list(test_mv_CE.values()), list(test_mv_OE.values()), Config)
 
     # Similarly for dual encoder model
     return SV_C_mAP, SV_C_acc, SV_O_mAP, SV_O_acc, MV_C_mAP, MV_C_acc, MV_O_mAP, MV_O_acc
+
+"""
+
+# updating evaluate_SI_performance_dual for 'nview'
+
+
+def evaluate_SI_performance_dual(dataset, Config, trcv_model, nview):
+    ref_OE = {}
+    ref_CE = {}
+    ref_mv_CE = {}
+    test_mv_CE = {}
+    test_OE = {}
+    test_CE = {}
+    label_cls = {}
+    label_obj = {}
+    ref_mv_OE = {}
+    test_mv_OE = {}
+    label_mv_OE = {}
+
+    """ 
+    Load the Dual Pose-invariant embedding space model and
+    extract the gallery (train) embeddings and probe (test) embeddings
+    """
+
+    trainData = loadDataset(Config, 'train', dataset)
+    trainLoader = DataLoader(trainData, shuffle=False,
+                             num_workers=8, batch_size=1)
+    trcv_model.eval()
+    with torch.no_grad():
+        for i, (ref_data, obj_labels, cls_labels) in enumerate(tqdm(trainLoader)):
+            rOE, rCE, mvrOE, mvrCE, _, _ = trcv_model(ref_data)
+            ref_OE[i] = rOE.squeeze().detach().cpu().numpy()
+            ref_CE[i] = rCE.squeeze().detach().cpu().numpy()
+            ref_mv_CE[i] = mvrCE.detach().cpu().numpy()
+            ref_mv_OE[i] = mvrOE.detach().cpu().numpy()
+    del trainData
+    del trainLoader
+    testData = loadDataset(Config, 'test', dataset)
+    testLoader = DataLoader(testData, shuffle=False,
+                            num_workers=8, batch_size=1)
+    with torch.no_grad():
+        for j, (test_data, obj_labels, cls_labels) in enumerate(tqdm(testLoader)):
+            # tOE, tCE, mvtOE, mvtCE, _, _ = trcv_model(test_data)
+            # test_OE[j] = tOE.squeeze().detach().cpu().numpy()
+            # test_CE[j] = tCE.squeeze().detach().cpu().numpy()
+            # label_obj[j] = obj_labels
+            # test_mv_CE[j] = mvtCE.detach().cpu().numpy()
+            # test_mv_OE[j] = mvtOE.detach().cpu().numpy()
+            # label_mv_OE[j] = j
+            if nview == 1:
+                """ If Single View Query """
+                tOE, tCE, _, _, _, _ = trcv_model(test_data)
+                test_OE[j] = tOE.squeeze().detach().cpu().numpy()
+                test_CE[j] = tCE.squeeze().detach().cpu().numpy()
+                label_obj[j] = obj_labels
+
+            elif nview > 1:
+                """ If Multi View Query """
+                tOE, tCE, mvtOE, mvtCE, _, _ = trcv_model(test_data)
+                test_CE[j] = mvtCE.detach().cpu().numpy()
+                """ 
+                    evaluating if the model can extract multi-view embeddings where the 
+                    reference images and the test query images of an unseen object are from disparate viewpoints                    
+                    split all available views of test object into two disjoint sets: 
+                    gallery: set comprising of reference views 
+                    probe: set comprising of test views  
+                """
+                p = int(Config.N_G/2)
+                _, _, refmvobj, _, _, _ = trcv_model(
+                    torch.unsqueeze(torch.squeeze(test_data)[:p], 0))
+                _, _, testmvobj, _, _, _ = trcv_model(
+                    torch.unsqueeze(torch.squeeze(test_data)[p:], 0))
+                ref_mv_OE[j] = refmvobj.squeeze().detach().cpu().numpy()
+                test_mv_OE[j] = testmvobj.squeeze().detach().cpu().numpy()
+                label_mv_OE[j] = j
+
+    if nview == 1:
+        """ Compute performance from single-view query """
+        start2 = time.time()
+        SV_C_mAP, SV_C_acc, SV_O_mAP, SV_O_acc = NNC_OWSC_SV(
+            list(ref_CE.values()), list(test_OE.values()), list(test_CE.values()), Config)
+        end2 = time.time()
+        print("Time (Inference): ", (end2 - start2))
+        return SV_C_mAP, SV_C_acc, SV_O_mAP, SV_O_acc
+
+    if nview > 1:
+        """ Compute performance from multi-view query """
+        start2 = time.time()
+        MV_C_mAP, MV_C_acc, MV_O_mAP, MV_O_acc = NNC_OWSC_MV(list(ref_mv_CE.values()), list(
+            ref_mv_OE.values()), list(test_mv_CE.values()), list(test_mv_OE.values()), Config)
+        end2 = time.time()
+        print("Time (Inference): ", (end2 - start2))
+        return MV_C_mAP, MV_C_acc, MV_O_mAP, MV_O_acc
+
