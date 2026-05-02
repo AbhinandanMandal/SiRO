@@ -15,9 +15,8 @@ single embedding model
 """
 
 
-from torch import optim
 from tqdm import tqdm
-from ConfigLearn import ConfigOOWL, ConfigMNet40, ConfigFG3D, ConfigOWSC_SI, ConfigOWSC_GN, HyperParams
+from torch import optim
 import torchvision.datasets as dset
 import torch.multiprocessing
 import sys
@@ -28,13 +27,17 @@ from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import StepLR
 from utils.trainLogger_update import TrainingLogger
 from models.VGG_PAN_SingleEmb import SingleModel
-from utils.DataUtility import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, OWSCTrainDataset, calculate_stats
 from utils.InferenceUtility_SI import evaluate_SI_performance_single
+from utils.DataUtility import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, OWSCTrainDataset, calculate_stats
+from ConfigLearn import ConfigOOWL, ConfigMNet40, ConfigFG3D, ConfigOWSC_SI, HyperParams
 # from models.VGG_PIE_SingleEmb import VGG_avg_picnn, VGG_avg_piproxy, VGG_avg_pitc
 # from utils.InferenceUtility_PI import evaluate_performance_single
 torch.multiprocessing.set_sharing_strategy('file_system')
 print(torch.__version__)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+
+
 
 """
 VGG_PIE_SingleEmb: Pose Invariant Embedding for single embedding model
