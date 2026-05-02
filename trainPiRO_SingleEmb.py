@@ -43,7 +43,6 @@ DataUtility_PiRO: Custom dataloader for different datasets, and other
                   data-related utility functions
 InferenceUtility_large: Functions for inference and computation of 
                         pose-invariant recognition accuracy and retrieval mAP
-helperFunctions: Other utility functions
 ConfigLearn: Training and Testing Configurations for different datasets
 -------------------------------------------------------------------------------
 """
