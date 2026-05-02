@@ -1,7 +1,7 @@
 
 """
 ===============================================================================
-Code for State-invariant Object Representation (SIOR) using 
+Code for State-invariant Representation of Object (SiRO) using 
 Pose-invariant Attention Network to learn category and object embeddings in the
 same space by training jointly using L-Softmax and Pose-invariant losses and
 curriculum learning for better results
@@ -15,25 +15,41 @@ dual embedding model
 """
 
 
+from tqdm import tqdm
+from torch import optim
+from ConfigLearn import ConfigOOWL, ConfigMNet40, ConfigFG3D, ConfigOWSC_SI, HyperParams
+import torchvision.datasets as dset
+import torch.multiprocessing
+import sys
+import torch
+from losses.PILosses import PILossOBJ, PILossCAT
+from losses.CategoryLoss import LossCAT
+from torch.utils.data import DataLoader
+from torch.optim.lr_scheduler import StepLR
+from utils.trainLogger_update import TrainingLogger
+from models.VGG_PIE_DualEmb import DualModel
 from utils.DataUtility import OOWLTrainDataset, MNet40TrainDataset, FG3DTrainDataset, OWSCTrainDataset, calculate_stats
 from utils.InferenceUtility_SI import evaluate_SI_performance_dual
-from models.VGG_PIE_DualEmb import DualModel
-from utils.trainLogger_update import TrainingLogger
-from torch.optim.lr_scheduler import StepLR
-from torch.utils.data import DataLoader
-from losses.CategoryLoss import LossCAT
-from losses.PILosses import PILossOBJ, PILossCAT
-import torch
-import sys
-import torch.multiprocessing
-import torchvision.datasets as dset
-from ConfigLearn import ConfigOOWL, ConfigMNet40, ConfigFG3D, ConfigOWSC_SI, ConfigOWSC_GN, HyperParams
-from torch import optim
-from tqdm import tqdm
 # from utils.InferenceUtility_PI import evaluate_performance_single
 torch.multiprocessing.set_sharing_strategy('file_system')
 print(torch.__version__)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+
+"""
+VGG_PIE_SingleEmb: Pose Invariant Embedding for single embedding model
+VGG_PAN_SingleEmb: Pose Invariant Attention Network for single embedding model
+PILosses: Pose invariant losses (object loss & category loss)
+CategoryLoss: Large margin softmax loss (category)
+DataUtility: Custom DataUtilities (dataloader) for different datasets and other
+             utility functions
+InferenceUtility_PI: Functions for inference and computation of 
+                     pose-invariant recognition accuracy and retrieval mAP
+InferenceUtility_SI: For state invariant recognition accuracy and retrieval mAP
+InferenceUtility_GN: For generalized recognition accuracy and retrieval mAP
+ConfigLearn: Training and Testing Configurations for different datasets
+
+"""
 
 
 # Input information
