@@ -1,0 +1,83 @@
+
+20/04/2026
+-------------------------------------------------------------------------------------------------------
+Funny thing is 
+in InferenceUtility_PI.py for def NNC_PIE_CLS(refC_emb, testO_emb, testC_emb, Config),
+author didn't used any refO_emb.
+
+but in InferenceUtility_SI.py, for def NNC_OWSC_SV(refC_emb, refO_emb, testC_emb, testO_emb, Config):
+author have used all, why ?
+
+
+21/04/2026
+---------------------------------------------------------------------------------------------------------
+Just going through the next part of this process, that is 'curriculum learning',
+one thing that stucked in my mind, the author used curriculum learning for the advancement into the present architecture.
+
+Author also cited 'curriculum learning' (Yoshua Benigo 2009's model)
+Now what i'm thinking is, what if,
+1. I also explore the different curriculum learning methods and try to apply into it 
+2. Also think about 'Deep Curriculum Learning' approach (like Deep RL)
+3. 
+
+
+
+25/04/2026
+------------------------------------------------------------------------------------------------------------
+So Training Code for SiRO are  
+1. train SiRO single embedding model (updated for OWSC dataset with curriculum learning)
+2. train SiRO dual embedding model (updated for OWSC dataset with curriculum learning)
+3.  
+
+Also the fact that, this time in training model, author used curriculum learning to do so 
+so need to include that as well 
+*curriculum learning is a training strategy not a seperate model something like that 
+
+in InferenceUtility_PI there is condition of nview =1, >1
+in InferenceUtility_SI, InferenceUtility_GN there is no concept of nview, it was always returning
+values for both the views (single and mutli view)
+
+so the fact that, 
+for this updated training code of SiRO for both single and double embedding model 
+during training thinking of using 'InferenceUtility_PI' not InferenceUtility_large, although both are same 
+
+and during testing, different inferenceutility according to different works 
+
+
+
+
+
+***Right now for single embedding space, author have used 'pose invariant object loss' and 
+'large margin softmax loss'
+
+for dual embedding model, he used 'pose invariant object, category loss' and 
+'large margin softmax loss'
+
+
+
+30/04/2026
+-----------------------------------------------------------------------------------------------------
+Till now have implemented basic broiler plate code for train SiRO single and dual model 
+Now the thing that is remaining is to application of 'curriculum learning' into training code.
+
+HOW CAN I APPLY CURRICULUM LEARNING INTO TRAINING CODE OF SINGLE AND DUAL MODEL ?
+
+
+01.05/2026
+-----------------------------------------------------------------------------------------------------
+Wow, impromptu thinking, 
+I think very few people think of applying MoE like different learning techniques (like curriculum) into
+the following research of SiRO. 
+What if in the future work, we can apply this too ?
+
+
+
+02/05/2026
+------------------------------------------------------------------------------------------------------
+Implemented basic curriculum learning concept that was given in the paper OWSC (https://openaccess.thecvf.com/content/WACV2026/papers/Sarkar_A_Dataset_and_Framework_for_Learning_State-invariant_Object_Representations_WACV_2026_paper.pdf)
+for single embedding model, 
+needs to train it and test it first.
+
+After that, will implement it on double embedding model and meanwhile also explore different ways to 
+improve the current given loss functions and other stuffs. 
+
